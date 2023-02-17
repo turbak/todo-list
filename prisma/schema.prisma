@@ -14,10 +14,14 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
+model Todo {
     id        String   @id @default(cuid())
+    userId    String
+    description String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    completedAt DateTime?
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // Necessary for Next auth
@@ -34,6 +38,7 @@ model Account {
     scope             String?
     id_token          String? // @db.Text
     session_state     String?
+    refresh_token_expires_in Int?
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
@@ -55,6 +60,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    todos         Todo[]
 }
 
 model VerificationToken {
